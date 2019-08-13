@@ -1,0 +1,43 @@
+   
+function _uploadFile(inputCTL,imgLoader,imageViewer,maxSize) {
+    var fileInput = $('#' + inputCTL);
+    var fileData = fileInput.prop("files")[0];   // Getting the properties of file from file field
+    if (fileData.size > maxSize) {
+        alert("سایز فایل نمی تواند از "+maxSize+" بایت بیشتر باشد ");
+        return;
+    }
+    
+    if ($("#" + imgLoader) != null)
+        $("#" + imgLoader).css({ visibility: "visible" });
+    var formData = new window.FormData();                  // Creating object of FormData class
+    formData.append("file", fileData); // Appending parameter named file with properties of file_field to form_data
+    $.ajax({
+        //url: '../Services/CommonServices.aspx',    // asp
+        url: '../FileManager/UploadFile',  // mvc
+        data: formData,
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        success: function (data) {
+debugger;
+            if ($("#" + imgLoader) != null)
+                $("#" + imgLoader).css({ visibility: "hidden" });
+            
+            $("#" + inputCTL).prop("value", "");
+
+            if ($("#" + imageViewer) != null)
+                $("#" + imageViewer).attr("src", data);
+
+            //            if (obj.StatusCode == "OK") {
+            //                ...
+            //                $('.result-message').html(obj.Message).show();
+            //            } else if (obj.StatusCode == "ERROR") {
+            //                $('.result-message').html(obj.Message).show();
+            //            }
+        },
+        error: function (errorData) {
+            $("#" + imgLoader).css({ visibility: "hidden" });
+            //            $('.result-message').html("there was a problem uploading the file.").show();
+        }
+
+    });
